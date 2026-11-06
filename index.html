@@ -72,6 +72,91 @@ main{max-width:1500px!important}
 .code{font-family:ui-monospace,monospace;letter-spacing:.18em;color:var(--ac)}.lnk{display:flex;gap:8px;margin-bottom:6px}.lnk input{flex:1;font-size:13px}
 .seats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}.sc{display:grid;gap:8px;align-content:start}.sc.mine{outline:2px solid var(--ac)}
 .sn{color:var(--mu);font-size:13px}.sp{font:600 20px Georgia,serif}.sp.free{color:var(--mu);font-weight:400;font-style:italic}.pj{display:grid;gap:6px}
+    .bk.a {
+        background: #fbf7ee !important;
+        color: #231d17 !important;
+        border: 2px solid #231d17 !important;
+        font-weight: 600;
+        letter-spacing: .04em
+    }
+
+    .zm {
+        background: rgba(8,6,4,.8);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        cursor: zoom-out;
+        transition: opacity .17s ease
+    }
+
+        .zm .zimg {
+            width: min(400px,88vw);
+            border-radius: 12px;
+            box-shadow: 0 18px 60px #000c;
+            transition: transform .17s ease
+        }
+
+        .zm.in {
+            animation: zbg .22s ease-out
+        }
+
+            .zm.in .zimg {
+                animation: zin .34s cubic-bezier(.2,.9,.3,1.12)
+            }
+
+        .zm.out {
+            opacity: 0
+        }
+
+            .zm.out .zimg {
+                transform: scale(.92)
+            }
+
+    .md.in:not(.zm) {
+        animation: zbg .2s ease-out
+    }
+
+        .md.in:not(.zm) > .box {
+            animation: zin .3s cubic-bezier(.2,.9,.3,1.1)
+        }
+
+    @keyframes zbg {
+        from {
+            opacity: 0
+        }
+    }
+
+    @keyframes zin {
+        from {
+            opacity: 0;
+            transform: scale(.8) translateY(18px)
+        }
+    }
+
+    .rc img, .seat.s .hd img, .board img {
+        transition: box-shadow .15s ease,transform .15s ease
+    }
+
+        .seat.s .hd img:hover, .board img:hover {
+            transform: translateY(-3px) scale(1.04);
+            box-shadow: 0 8px 22px #0006
+        }
+
+        .rc img:hover {
+            box-shadow: 0 0 0 2px var(--ac),0 6px 16px #0005
+        }
+
+    @media(prefers-reduced-motion:reduce) {
+        .zm.in, .zm.in .zimg, .md.in, .md.in > .box {
+            animation: none
+        }
+
+        .zm, .zm .zimg {
+            transition: none
+        }
+    }
+    .zm .zimg.pc {
+        width: min(640px,92vw,72vh)
+    }
 </style></head><body>
 <header><h1>Adeptes — prototype</h1><div id="top"></div></header>
 <main id="app"></main><div id="ov"></div>
@@ -187,21 +272,23 @@ const tk1i=i=>t=>{const p=S.pl[i],n=TKN[t];return `<div><img src="${IM['T_'+n]}"
 const tagsOf=p=>{const o=[];if(p.inh)o.push(['Assassiner = −1♆','Dernier Souffle de l’Assassin']);p.dom.forEach(d=>{if(d.g&&d.a=='Skarrak')o.push(['Assassiner = −1♆','Dieu Skarrak']);if(d.g&&d.a=='Stiffliz')o.push(['Être assassiné = −1♆','Dieu Stiffliz'])});return o};
 const meIdx=()=>NET?((S.seats[S.cur]==null&&OWN)?S.cur:(ME>=0?ME:0)):S.cur;
 function panel(p,i,pos){const tk1=tk1i(i);const cur=i==S.cur,mine=pos=='s'&&(NET?(S.seats[i]==UID||(S.seats[i]==null&&OWN)):true),rc=(k,c)=>`<span class="rc">${im(k,c)}</span>`;
- let h=`<section class="box seat ${pos} ${cur?'cur':''} ${p.alive?'':'dead'}"><h3 onclick="rn(${i})">${p.n}${cur?' ◀':''}${p.alive?'':' ✝'}${NET&&!S.seats[i]?` <small>(siège libre)</small>${ME<0?` <button onclick="event.stopPropagation();join(${i})">Prendre ce siège</button>`:''}`:''}</h3>${tagsOf(p).length?`<div class="tags">${tagsOf(p).map(([x,s])=>`<span class="tag" tabindex="0" title="Source : ${s}" data-tip="Source : ${s}">${x}</span>`).join('')}</div>`:''}<div class="in"><div class="c1"><div class="tk"><div class="cg">`+['f','s'].map(tk1).join('')+`</div><div class="vpg" title="Points de victoire (ne servent pas de monnaie)">`+tk1('vp')+'</div></div>';
+    let h = `<section class="box seat ${pos} ${cur ? 'cur' : ''} ${p.alive ? '' : 'dead'}" data-i="${i}" data-pos="${pos}"><h3 onclick="rn(${i})">${p.n}${cur ? ' ◀' : ''}${p.alive ? '' : ' ✝'}${NET && !S.seats[i] ? ` <small>(siège libre)</small>${ME < 0 ? ` <button onclick="event.stopPropagation();join(${i})">Prendre ce siège</button>` : ''}` : ''}</h3>${tagsOf(p).length ? `<div class="tags">${tagsOf(p).map(([x, s]) => `<span class="tag" tabindex="0" title="Source : ${s}" data-tip="Source : ${s}">${x}</span>`).join('')}</div>` : ''}<div class="in"><div class="c1"><div class="tk"><div class="cg">` + ['f', 's'].map(tk1).join('') + `</div><div class="vpg" title="Points de victoire (ne servent pas de monnaie)">` + tk1('vp') + '</div></div>';
  h+=`<div class="zone">`+p.dom.map((d,j)=>rc((d.g?'G_':'A_')+d.a,hlc(i,j))).join('')+(p.hor?rc('H_'+p.hor,hlh(i)):'')+`</div>`;
  h+=`<small>Domaine : ${p.dom.length} · Cimetière : ${p.cim.length}${p.hor?` · Volonté ${Math.min(p.hv,VOL[p.hor])}/${VOL[p.hor]}`:''}</small></div>`;
  if(p.alive){h+=`<div class="c2"><div class="zone hd">`;
   if(mine)h+=p.hand.map((k,j)=>{const a=AX[k]||[0,0],c=has(p,'Harhok')?[0,0]:[a[0],a[1]],ok=cur&&S.ph==1&&!S.played&&!lokb(p),pay=p.f>=c[0]&&p.s>=c[1],cs=(c[0]||c[1])?[c[0]?c[0]+'⚚':'',c[1]?c[1]+'♆':''].filter(Boolean).join(' '):'gratuit';
    return `<div>${im('X_'+k)}<div style="margin-top:4px"><button onclick="card(${j})" ${ok&&pay?'':'disabled'} title="${ok&&!pay?'Pas assez de jetons':''}">Jouer (${cs})</button> <button onclick="disc(${j})" ${ok?'':'disabled'}>Défausser</button></div></div>`}).join('');
   else h+=p.hand.map(()=>back('a s','Action')).join('');
-  h+=(mine&&S.show)?im('P_'+p.ch):back('s','Perso');h+='</div>';
-  if(mine)h+=`<button style="margin-top:6px" onclick="S.show=!S.show;paint()">${S.show?'Cacher':'Voir'} mon personnage</button>`;h+='</div>'}
+     h += mine ? im('P_' + p.ch) : back('s', 'Perso'); h += '</div></div>'
+ }
  return h+'</div></section>'}
 const can=i=>!NET||S.seats[i]==UID||(S.seats[i]==null&&OWN);
-function modal(){if(L.zoom&&!S.modal)return `<div class="md" onclick="L.zoom=null;paint()"><img style="width:min(380px,88vw);border-radius:10px" src="${IM[L.zoom]}"></div>`;
+    function modal() {
+        if (!L.zoom) L.zk = null; if (!S.modal) L.msig = null;
+        if (L.zoom && !S.modal) { const an = L.zk !== L.zoom; L.zk = L.zoom; return `<div class="md zm${an ? ' in' : ''}" onclick="closeZoom()"><img class="zimg${L.zoom.startsWith('P_') ? ' pc' : ''}" src="${IM[L.zoom]}" alt=""></div>` }
  if(pickOn())return pickHtml();
  const m=S.modal;if(!m)return'';let b='';
- if(m.t=='zoom')b=`<img class="big" style="width:min(340px,80vw)" src="${IM[m.k]}"><button onclick="S.modal=null;render()">Fermer</button>`;
+        if (m.t == 'zoom') b = `<img class="big" style="width:${m.k.startsWith('P_') ? 'min(580px,90vw,68vh)' : 'min(340px,80vw)'}" src="${IM[m.k]}"><button onclick="S.modal=null;render()">Fermer</button>`;
  if(m.t=='card'||m.t=='fx'){const w=m.who==null?S.cur:m.who,o=m.x.length<m.st.length?opts(m):[],img=m.t=='card'?'X_'+m.k:m.img,opt=m.t=='card'||/^(aube|crep|jour|g:)/.test(m.id);
  b=`<h3>${m.dead!=null?'Dernier Souffle de '+pl(m.dead).n:pl(S.cur).n}</h3>`+((m.priv&&!can(w))?'':`<img class="big" src="${IM[img]}" style="width:260px">`)+(can(w)?`<p>${QL[m.st[m.x.length]]}</p>`+(o.length?o.map(x=>`<button onclick="pickX('${x.v}')">${x.l}</button>`).join(' '):'<p>Aucun choix possible.</p>')+`<p>${opt&&(o.length||m.t=='card')?`<button onclick="cancel()">Annuler</button>`:!o.length?`<button onclick="skipFx()">Continuer</button>`:''}</p>`:`<p><small>En attente de ${pl(w).n}…</small></p>`)}
  if(m.t=='off'){const i=m.l[m.k];b=i==null?'':(NET&&!can(i))?`<h3>Une Horreur est appelée</h3><p>En attente de <b>${S.pl[i].n}</b>…</p>`:`<h3>Une Horreur est appelée</h3><img class="big" src="${IM['H_'+m.h]}"><p><b>${S.pl[i].n}</b>, veux-tu devenir son hôte ? (Lis-la : seul·e toi la vois.)</p><button class="pr" onclick="off(true)">Accepter</button> <button onclick="off(false)">Refuser</button>`;
@@ -210,7 +297,8 @@ function modal(){if(L.zoom&&!S.modal)return `<div class="md" onclick="L.zoom=nul
  b=`<h3>Fin de manche</h3><p><b>${r.head}</b></p>`+(r.lines.length?r.lines.map(l=>`<div class="row" style="align-items:center;margin:8px 0;text-align:left;flex-wrap:nowrap"><div class="chs">${im('P_'+l.ch)}</div><div><b>${l.n}</b> (${CHN(l.ch)}) <b>+1 🏆</b><br><small>${l.txt}</small></div></div>`).join(''):'<p>Aucun point gagné cette manche.</p>')+`<p><small>${r.chars.join(' · ')}</small></p><p>Totaux : ${S.pl.map(p=>p.n+' '+p.vp+' 🏆').join(' · ')}</p><button class="pr" onclick="valid()">${fin?'Voir le résultat de la partie':'Manche suivante'}</button>`}
  if(m.t=='end')b=`<h3>Fin de manche</h3><p>Chaque personnage gagne 1 🏆 par objectif réalisé.</p>`+S.pl.map((p,i)=>`<div class="row" style="align-items:center;margin-bottom:8px">${im('P_'+p.ch)}<div><b>${p.n}</b> — ${CN[p.ch]||p.ch}<br>${!NET||OWN?`<button onclick="vp(${i},-1)">−</button> `:''}<b>${p.vp}</b> 🏆${!NET||OWN?` <button onclick="vp(${i},1)">+</button>`:''}</div></div>`).join('')+`<button class="pr" onclick="valid()">Valider la manche</button> <button onclick="S.modal=null;render()">Annuler</button>`;
  if(m.t=='win')b=`<h3>Fin de partie</h3><p>Victoire : <b>${S.win}</b></p><button class="pr" onclick="S.pl.forEach(p=>p.vp=0);S.round=0;S.first=-1;deal()">Nouvelle partie</button>`;
- return `<div class="md"><div class="box" style="text-align:center">${b}</div></div>`}
+        const sig = m.t + ':' + (m.id || m.k || ''), an = L.msig !== sig; L.msig = sig; return `<div class="md${an ? ' in' : ''}"><div class="box" style="text-align:center">${b}</div></div>`
+    }
 function render(){if(VIEW!='game'&&VIEW!='local'){paint();return}if(!S.modal&&!S.res)checkAloppos();if(S.sf&&S.sf.length&&!S.modal)startSf();if(!S.modal&&!(S.sf&&S.sf.length))checkEnd();paint();if(NET&&!FN)push()}
 const CN={Impur:'Apostat'},has=(p,h)=>p.hor==h||S.cen==h,al=()=>S.pl.map((p,i)=>i).filter(i=>S.pl[i].alive);
 function G(i,t,n){const p=S.pl[i];if(n<0){p[t]=Math.max(0,p[t]+n);return}
@@ -307,14 +395,26 @@ function checkAloppos(){let hit=false;S.pl.forEach((p,i)=>{for(let k=0;k<2&&p.al
  S.log=(S.log||[]).slice(-5).concat([{txt:'Autel Aloppos : '+p.n+' possède '+p.s+'♆'+(d?' et meurt':' — Okt est sacrifié à sa place')}]);if(d){S.msg='L’Autel d’Aloppos assassine '+p.n+' (3♆ ou plus).';hit=true;break}}});
  if(hit&&S.rev){S.modal={t:'zoom',k:S.rev};S.rev=null}}
 const pkKey=()=>S.round+':'+S.cur;
-const pickOn=()=>!window.__nopick&&!S.modal&&!S.res&&can(S.cur)&&S.ph==1&&!S.played&&P().alive&&P().hand.length>0&&!lokb(P())&&L.pkd!=pkKey();
+    const pickOn = () => !window.__nopick && !S.modal && !S.res && can(S.cur) && S.ph == 1 && !S.played && P().alive && P().hand.length > 0 && !lokb(P()) && L.pkd != pkKey();
+    function closeZoom() { const o = document.querySelector('.zm'); if (o && !o.classList.contains('out')) { o.classList.add('out'); setTimeout(() => { L.zoom = null; L.zk = null; paint() }, 170) } else { L.zoom = null; L.zk = null; paint() } }
 function reopenPick(){L.pkd=null;L.pks=null;paint()}
 function pickHtml(){const p=P(),key=pkKey(),anim=L.pks!=key;L.pks=key;
  return `<div class="pk${anim?' in':''}"><div class="pkh"><h2>${p.n} — choisis ton action du Jour</h2><p>Joue OU défausse une de ces cartes. Une seule action par Jour.</p></div>${S.msg?`<div class="msg pkm">${S.msg}</div>`:''}<div class="pkc">`+
  p.hand.map((k,j)=>{const a=AX[k]||[0,0],c=has(p,'Harhok')?[0,0]:[a[0],a[1]],pay=p.f>=c[0]&&p.s>=c[1],cs=(c[0]||c[1])?[c[0]?c[0]+'⚚':'',c[1]?c[1]+'♆':''].filter(Boolean).join(' '):'gratuit';
   return `<div class="pkcard"><img src="${IM['X_'+k]}" alt="${NAMES[k]||k}"><div class="pkb"><button class="pr" ${pay?'':'disabled'} onclick="card(${j})">Jouer (${cs})</button><button onclick="disc(${j})">Défausser</button></div>${pay?'':'<small class="pkw">Pas assez de jetons pour la jouer</small>'}</div>`}).join('')+
- `</div><div class="pkf"><button onclick="L.pkd=pkKey();paint()">Faire une autre action d’abord</button><small>Construire un Autel, utiliser un pouvoir de Dieu, regarder le plateau… tu pourras revenir au choix de ta carte.</small></div></div>`}
-function fxl(ph){const p=P(),out=[];p.dom.forEach((d,j)=>{const e=FXD[d.a];if(!e)return;
+        `</div><div class="pkf"><button onclick="L.pkd=pkKey();paint()">Faire une autre action d’abord</button><small>Construire un Autel, utiliser un pouvoir de Dieu, regarder le plateau… tu pourras revenir au choix de ta carte.</small></div></div>`
+}
+    function flyCard(i) {
+        if (matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return; const pile = document.querySelector('.pile-act'), seat = document.querySelector('.seat[data-i="' + i + '"]'); if (!pile || !seat) return;
+        const z = seat.querySelector('.hd') || seat, a = pile.getBoundingClientRect(), b = z.getBoundingClientRect(), el = document.createElement('div'); el.className = 'bk a fly'; el.textContent = 'Action';
+        el.style.cssText = 'position:fixed;left:' + a.left + 'px;top:' + a.top + 'px;width:' + a.width + 'px;height:' + a.height + 'px;z-index:20;pointer-events:none'; document.body.appendChild(el);
+        const dx = b.left + b.width / 2 - (a.left + a.width / 2), dy = b.top + b.height / 2 - (a.top + a.height / 2), rot = { s: 0, w: 90, n: 180, e: -90 }[seat.dataset.pos] || 0;
+        el.animate([{ transform: 'translate(0,0) rotate(0deg) scale(1)', opacity: 1 }, { transform: 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg) scale(.7)', opacity: .95, offset: .85 }, { transform: 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg) scale(.55)', opacity: 0 }], { duration: 800, easing: 'cubic-bezier(.3,.7,.3,1)' }).onfinish = () => el.remove()
+    }
+    function playAnims() { L.seen = L.seen || {}; (S.da || []).forEach(e => { if (L.seen[e.id]) return; L.seen[e.id] = 1; if (Date.now() - e.t < 4000) flyCard(e.i) }) }
+        function fxl(ph) {
+            const p = P(), out = []; p.dom.forEach((d, j) => {
+                const e = FXD[d.a]; if (!e) return;
  Object.keys(e).filter(k=>k.startsWith((d.g?'G:':'A:')+ph)).forEach(k=>{if(!d.g&&has(p,'Leykom'))return;const[l,st,fn,cond,opt]=e[k];if(cond&&!cond(p,j))return;
   for(let r=0;r<(ph=='aube'&&has(p,'Blymeth')?2:1);r++)out.push({id:ph+':'+j+':'+k+':'+r,l,st,fn,j,opt,img:(d.g?'G_':'A_')+d.a})})});return out}
 const pend=ph=>fxl(ph).filter(e=>!e.opt&&!S.dn[e.id]).length;
@@ -338,7 +438,7 @@ function ctrl(){const p=P(),a=S.aut[S.aut.length-1];
  if(!can(S.cur))return `<small>C’est le tour de <b>${p.n}</b>…</small>`;
  const fb=ph=>fxl(ph).map(e=>`<button ${S.dn[e.id]?'disabled':''} onclick="fx('${e.id}')">${e.l}</button>`).join(' ');let h='';
  if(S.ph==0)h=`<button class="pr" onclick="draw()" ${S.drew?'disabled':''}>1. ${lokb(p)?'Pas de pioche (Lok)':'Piocher une action'}</button> ${canGrave(p)?`<button onclick="graveDraw()" ${S.drew?'disabled':''}>1. Ou piocher dans un cimetière (Skarrak)</button> `:''}<button onclick="tok('f')" ${!S.drew||S.tok?'disabled':''}>2. +1 foi</button> <button onclick="tok('s')" ${!S.drew||S.tok||p.f<1?'disabled':''} title="${p.f<1?'Il faut 1⚚ à payer':''}">2. Payer 1⚚ : +1 sacrilège</button><div style="margin:6px 0">3. Effets d’Aube : ${fb('aube')||'aucun'}</div><button class="pr" onclick="ph(1)" ${S.drew&&S.tok&&!pend('aube')?'':'disabled'}>Passer au Jour →</button>`;
- if(S.ph==1){const c=a?acost(p,a):[0,0];h=`<small><b>Obligatoire :</b> joue OU défausse une carte action (dans ta main). Tu peux aussi construire l’Autel du dessus.</small> ${!S.played&&p.hand.length&&!lokb(p)?`<button class="pr" onclick="reopenPick()">Choisir ma carte</button>`:''}<br><button class="pr" onclick="build()" ${S.built||!a||has(p,'Folgos')?'disabled':''}>Construire l’Autel à ${a} (${c[0]} foi, ${c[1]} sacrilège)</button><div style="margin:6px 0">Pouvoirs de Dieux : ${fb('jour')||'aucun'}</div><button class="pr" onclick="ph(2)">Passer au Crépuscule →</button>`}
+    if (S.ph == 1) { const c = a ? acost(p, a) : [0, 0]; h = `<small><b>Obligatoire :</b> joue OU défausse une carte action (dans ta main). Tu peux aussi construire l’Autel du dessus.</small> ${!S.played && p.hand.length && !lokb(p) ? `<button class="pr" onclick="reopenPick()">Choisir ma carte</button>` : ''}<br><button class="pr" onclick="build()" ${S.built || !a || has(p, 'Folgos') || p.f < c[0] || p.s < c[1] ? 'disabled' : ''} title="${a && (p.f < c[0] || p.s < c[1]) ? 'Pas assez de jetons' : ''}">Construire l’Autel à ${a} (${c[0]} foi, ${c[1]} sacrilège)</button><div style="margin:6px 0">Pouvoirs de Dieux : ${fb('jour') || 'aucun'}</div><button class="pr" onclick="ph(2)">Passer au Crépuscule →</button>` }
  if(S.ph==2)h=`<div>Assassinat : `+S.pl.map((t,i)=>i!=S.cur&&t.alive?`<button onclick="kill(${i})" ${p.s<kc(i)||has(p,'Tebnass')?'disabled':''}>${t.n} (${kc(i)}♆)</button>`:'').join(' ')+`</div><div style="margin:6px 0">Effets de Crépuscule : ${fb('crep')||'aucun'}</div><div>Quêtes : `+(p.dom.map((d,j)=>d.g?'':`<button onclick="inv(${j})" ${QU[d.a]&&QU[d.a](S.cur,d)?'':'disabled'}>Invoquer ${d.a}</button>`).join(' ')||'—')+`</div><button class="pr" style="margin-top:6px" onclick="ph(3)" ${pend('crep')?'disabled':''}>Passer à la Nuit →</button>`;
  if(S.ph==3&&nightOff(S.cur))h=`<small>La nuit ne tombe pas pour toi (aura de Gretchyl) : ni Volonté ni effet de Nuit ce tour.</small> <button class="pr" onclick="endTurn()">Fin du tour →</button>`;
  if(S.ph==3&&!nightOff(S.cur)){const v=p.hor&&V[p.hor];h=(v?`<button onclick="vol()" ${p.hv>=v.length?'disabled':''}>Volonté ${RO[Math.min(p.hv,v.length-1)]} (${p.hor})</button> `:'<small>Pas d’Horreur.</small> ')+`<button class="pr" onclick="endTurn()">Fin du tour →</button>`}
@@ -369,7 +469,9 @@ async function createRoom(){if(NETST!='ok')return;let c;for(let k=0;k<6;k++){c=m
  try{await DB.doc('rooms/'+c).set(o)}catch(e){alert('Création refusée : il faut un accès contributeur à cette page. ('+((e&&e.message)||e)+')');return}
  location.hash=c;route()}
 function joinCode(){const c=String($('#jc').value||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(c){location.hash=c;route()}}
-function route(){const c=(location.hash||'').replace(/^#/,'').toUpperCase();
+    function route() {
+        const c = (location.hash || '').replace(/^#/, '').toUpperCase();
+        if (c == 'DEMO') { goDemo(); return }
  if(VIEW=='local'&&!c)return;if(c&&c==CODE&&['room','game','join','missing'].includes(VIEW))return;
  UNSUB&&UNSUB();UNSUB=null;CODE='';R=null;NET=0;
  if(!CODE_RE.test(c)){VIEW='hub';paint();return}
@@ -379,7 +481,21 @@ function route(){const c=(location.hash||'').replace(/^#/,'').toUpperCase();
 function onRoom(s){if(!s.exists){R=null;VIEW='missing';paint();return}R=s.data();OWN=R.host==UID;
  if(R.status=='playing'&&R.v){const sh=S.show;try{S=JSON.parse(R.v)}catch(e){return}scrub();S.show=sh||false;ME=S.seats.indexOf(UID);VIEW='game';FN=true;paint();FN=false}
  else{VIEW='room';ME=seatOf();paint()}}
-function leave(){UNSUB&&UNSUB();UNSUB=null;NET=0;CODE='';R=null;OWN=false;VIEW='hub';if(location.hash)location.hash='';paint()}
+    function leave() { UNSUB && UNSUB(); UNSUB = null; NET = 0; CODE = ''; R = null; OWN = false; VIEW = 'hub'; if (location.hash) location.hash = ''; paint() }
+    goDemo(){
+        UNSUB && UNSUB(); UNSUB = null; NET = 0; CODE = ''; R = null; OWN = false; if (location.hash) location.hash = ''; VIEW = 'local';
+        S = { seats: [null, null, null, null], pl: ['Adepte 1', 'Adepte 2', 'Adepte 3', 'Adepte 4'].map(n => ({ n, vp: 0 })), round: 2, first: -1, win: null }; deal();
+        S.round = 2; S.cur = 0; const set = (i, o) => Object.assign(S.pl[i], o);
+        set(0, { ch: 'Paladin', f: 4, s: 2, vp: 1, hand: ['Malediction', 'Meurtre'], dom: [{ a: 'Orhos', g: 0 }, { a: 'Amass', g: 0 }, { a: 'Okt', g: 1 }], hor: 'Rajtakk', hv: 1, inh: 1, cim: ['Peche', 'Priere', 'Purge'] });
+        set(1, { ch: 'Pieu', f: 1, s: 3, vp: 1, hand: ['Visite'], dom: [{ a: 'Skarrak', g: 1 }], hor: 'Folgos', hv: 0, cim: ['Blaspheme'] });
+        set(2, { ch: 'Assassin', f: 2, s: 1, vp: 0, hand: ['Inversion'], dom: [{ a: 'Aloppos', g: 0 }], cim: ['Espionnage', 'Courage'] });
+        set(3, { ch: 'Impur', f: 5, s: 0, vp: 0, hand: ['Piete'], dom: [{ a: 'Stiffliz', g: 1 }], cim: ['Sabotage'] });
+        const used = ['Orhos', 'Amass', 'Okt', 'Skarrak', 'Aloppos', 'Stiffliz']; S.aut = S.aut.filter(a => !used.includes(a));
+        S.hor = ['Blymeth', 'Harhok', 'Gretchyl', 'Pyrmiss', 'Leykom']; S.cen = 'Ipsey'; S.ban = ['Tebnass']; S.act = S.act.slice(0, 27);
+        flags(); S.ph = 1; S.drew = true; S.tok = true; S.dn = {}; S.msg = '';
+        S.log = [{ txt: 'Jeton d’Aube : Adepte 1 −1⚚ +1♆' }, { txt: 'Autel Orhos : Adepte 1 +2⚚' }, { txt: 'Dieu Okt : protège tes Autels et Dieux du bannissement' }];
+        L.pkd = pkKey(); L.pks = pkKey(); render()
+    }
 function goLocal(){UNSUB&&UNSUB();UNSUB=null;NET=0;CODE='';R=null;OWN=false;if(location.hash)location.hash='';VIEW='local';
  S={seats:[null,null,null,null],pl:['Adepte 1','Adepte 2','Adepte 3','Adepte 4'].map(n=>({n,vp:0})),round:0,first:-1,win:null};deal()}
 function take(i){if(R['s'+i])return;const o={};[0,1,2,3].forEach(k=>{if(R['s'+k]==UID)o['s'+k]=null});o['s'+i]=UID;o['n'+i]=NICK||('Adepte '+(i+1));wr(o)}
@@ -398,8 +514,8 @@ function hubHtml(){const ok=NETST=='ok';
  <div><button class="pr big" ${ok?'':'disabled'} onclick="createRoom()">Créer un salon</button></div>
  <div class="hj"><input id="jc" placeholder="Code du salon" maxlength="8" onkeydown="if(event.key=='Enter')joinCode()"><button ${ok?'':'disabled'} onclick="joinCode()">Rejoindre</button></div>
  ${NETST=='wait'?'<small>Connexion en cours…</small>':NETST=='off'?'<div class="msg">Le mode en ligne n’est pas disponible : il faut être connecté et avoir un accès contributeur à cette page. Demande au propriétaire de t’inviter.</div>':''}
- ${S.msg?`<div class="msg">${S.msg}</div>`:''}
- <div><button onclick="goLocal()">Jouer hors ligne sur un seul écran</button></div></div>`}
+ ${S.msg ? `<div class="msg">${S.msg}</div>` : ''}
+ <div><button onclick="goLocal()">Jouer hors ligne sur un seul écran</button> <button onclick="goDemo()">Voir une partie avancée (démo)</button></div></div>`}
 function roomHtml(){const me=seatOf(),link=BASE+'#'+CODE,seated=[0,1,2,3].filter(i=>R['s'+i]).length,host=R.host==UID;
  return `<div class="box"><h2 style="margin:0 0 6px;font:600 22px Georgia,serif">Salon <span class="code">${CODE}</span></h2><p style="margin:4px 0 8px">Partage ce lien pour inviter des joueurs :</p>
  <div class="lnk"><input id="lk" readonly value="${link}" onclick="this.select()"><button class="pr" onclick="copyLink()">${L.cp?'Lien copié ✓':'Copier le lien'}</button></div>
@@ -430,6 +546,6 @@ async function net(){try{
  }catch(e){console.error('Adeptes online:',e);NETST='off';paint();return}
  route()}
 addEventListener('hashchange',route);
-deal();net();
+    deal(); net(); if ((location.hash || '').toUpperCase() == '#DEMO') goDemo();
 
 </script></body></html>
