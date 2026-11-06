@@ -482,7 +482,7 @@ function onRoom(s){if(!s.exists){R=null;VIEW='missing';paint();return}R=s.data()
  if(R.status=='playing'&&R.v){const sh=S.show;try{S=JSON.parse(R.v)}catch(e){return}scrub();S.show=sh||false;ME=S.seats.indexOf(UID);VIEW='game';FN=true;paint();FN=false}
  else{VIEW='room';ME=seatOf();paint()}}
     function leave() { UNSUB && UNSUB(); UNSUB = null; NET = 0; CODE = ''; R = null; OWN = false; VIEW = 'hub'; if (location.hash) location.hash = ''; paint() }
-    goDemo(){
+    function goDemo() {
         UNSUB && UNSUB(); UNSUB = null; NET = 0; CODE = ''; R = null; OWN = false; if (location.hash) location.hash = ''; VIEW = 'local';
         S = { seats: [null, null, null, null], pl: ['Adepte 1', 'Adepte 2', 'Adepte 3', 'Adepte 4'].map(n => ({ n, vp: 0 })), round: 2, first: -1, win: null }; deal();
         S.round = 2; S.cur = 0; const set = (i, o) => Object.assign(S.pl[i], o);
