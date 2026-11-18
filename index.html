@@ -625,9 +625,8 @@ const PK = { "img": { "H_Rajtakk": "data:image/webp;base64,UklGRloxAABXRUJQVlA4W
             else h += p.hand.map(() => back('a s', 'Action')).join('');
             h += mine ? im('P_' + p.ch) : back('s', 'Perso'); h += '</div></div>'
         }
-
+        return h + '</div></section>'
     }
-    return h + '</div></section>'}
     const can = i => !NET || S.seats[i] == UID || (S.seats[i] == null && OWN);
     function modal() {
         if (!L.zoom) L.zk = null; if (!S.modal) L.msig = null;
@@ -701,10 +700,10 @@ const PK = { "img": { "H_Rajtakk": "data:image/webp;base64,UklGRloxAABXRUJQVlA4W
         },
         Okt: { 'A:aube': ['+1⚚', [], p => G(S.cur, 'f', 1)] },
         Nezdak: { 'G:aube': ['Tous ont une Horreur : sacrifier Nezdak, +1🏆', [], (p, X, j) => { sac(p, j); p.vp++ }, p => al().every(k => pl(k).hor)] },
-        'G:aube': ['Tous ont une Horreur : sacrifier Nezdak, +1🏆', [], (p, X, j) => { sac(p, j); p.vp++ }, p => al().every(k => pl(k).hor)]
-    },
-        Amass: { 'A:aube': ['+1⚚ OU +1♆', ['T'], (p, X) => G(S.cur, X[0], 1)], 'G:aube': ['+1⚚ et +1♆', [], p=> { G(S.cur, 'f', 1); G(S.cur, 's', 1) }],
-    'G:aube2': ['12 jetons cumulés : sacrifier Amass, +1🏆', ['Y'], (p, X, j) => { if (X[0] == 'o') { sac(p, j); p.vp++ } }, p => p.f + p.s >= 12, 1]},
+        Amass: {
+            'A:aube': ['+1⚚ OU +1♆', ['T'], (p, X) => G(S.cur, X[0], 1)], 'G:aube': ['+1⚚ et +1♆', [], p => { G(S.cur, 'f', 1); G(S.cur, 's', 1) }],
+            'G:aube2': ['12 jetons cumulés : sacrifier Amass, +1🏆', ['Y'], (p, X, j) => { if (X[0] == 'o') { sac(p, j); p.vp++ } }, p => p.f + p.s >= 12, 1]
+        },
     Toknys: { 'A:crep': ['+1⚚ et +1♆ (aucune action jouée)', [], p => { G(S.cur, 'f', 1); G(S.cur, 's', 1) }, () => !S.played] },
     Lok: { 'A:crep': ['Lok joue l’action du dessus', [], (p, X, j) => lokplay(j, 1)], 'G:crep': ['Lok joue l’action du dessus', [], (p, X, j) => lokplay(j, 0)] },
     Stiffliz: { 'A:aube': ['+1♆', [], p => G(S.cur, 's', 1)], 'A:crep': ['Transférer un jeton entre deux autres Adeptes', ['T', 'x', 'y'], (p, X) => { pl(X[1])[X[0]]--; G(+X[2], X[0], 1) }, () => al().some(k => k != S.cur && (pl(k).f || pl(k).s))] },
