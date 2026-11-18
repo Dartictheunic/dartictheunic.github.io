@@ -882,12 +882,8 @@ const PK = { "img": { "H_Rajtakk": "data:image/webp;base64,UklGRloxAABXRUJQVlA4W
         if (S.ph == 3 && !nightOff(S.cur)) { const v = p.hor && V[p.hor], must = mustVol(p); h = (v ? (p.hv >= v.length ? '<small>Plus de Volonté à activer pour cette Horreur.</small> ' : (S.vd ? `<button disabled>Volonté activée ✓</button> ` : `<button class="pr" onclick="vol()">Activer la Volonté ${RO[p.hv]} de ${p.hor} (obligatoire)</button> `)) : '<small>Pas d’Horreur à servir.</small> ') + `<button ${must ? '' : 'class="pr" '}onclick="endTurn()">Fin du tour →</button>` + (must ? '<div><small>Pendant la Nuit, tu dois activer la prochaine Volonté de ton Horreur. Une seule par Nuit.</small></div>' : '') }
         return h
     }
-    const p = P(),
-        m = meIdx(),
-        au = S.aut[S.aut.length - 1],
-        pos = ['s', 'w', 'n', 'e'];
     function paintGame() {
-        const p = P(), m = meIdx(), pos = ['s', 'w', 'n', 'e'], seat = k => panel(S.pl[(m + k) % 4], (m + k) % 4, pos[k]);
+        const p = P(), m = meIdx(), au = S.aut[S.aut.length - 1], pos = ['s', 'w', 'n', 'e'], seat = k => panel(S.pl[(m + k) % 4], (m + k) % 4, pos[k]);
         $('#top').innerHTML = `<button onclick="leave()">${NET ? '← Quitter le salon' : '← Accueil'}</button> ${NET && CODE ? `<small>Salon <b>${CODE}</b></small>` : ''} ${NET && OWN ? '<button onclick="backToLobby()">Retour au salon</button>' : ''} <small>Manche ${S.round} · à toi : <b>${p.n}</b> · ${NET ? (ME >= 0 ? 'en ligne, siège ' + (ME + 1) : 'en ligne, spectateur') : 'hors ligne'}</small> ${arb() ? '<button onclick="endRound()">Terminer la manche (arbitre)</button>' : ''} ${!NET || OWN ? `<button onclick="if(confirm('Relancer une manche ?'))deal()">Redistribuer</button>` : ''} ${!NET || OWN ? `<button onclick="S.arb=!S.arb;render()">Mode arbitre : ${S.arb ? 'oui' : 'non'}</button>` : ''}`;
         { const o = document.querySelector('.lgl'); L.lgt = o ? o.scrollTop : 0 } $('#app').innerHTML = `<div class="table"><div class="a-opps">${seat(1)}${seat(2)}${seat(3)}</div>
  <div class="a-center"><div class="box board row"><div class="c">${au ? im('A_' + au) : ''}Autels (${S.aut.length})</div><div class="c">${S.vis && S.hor.length ? im('H_' + S.hor[S.hor.length - 1]) : `<img src="${IM.HB}" alt="Horreurs">`}Horreurs (${S.hor.length})${S.vis ? '<br>dessus visible' : ''}</div><div class="c">${S.cen ? im('H_' + S.cen) : back('', '—')}Horreur active</div><div class="c"><div class="pile-act" style="display:inline-block">${S.vis && S.act.length ? im('X_' + S.act[S.act.length - 1]) : back('a', 'Action')}</div>Actions (${S.act.length})</div><div class="c">Bannies : ${S.ban.length}</div></div>
